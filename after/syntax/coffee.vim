@@ -7,31 +7,29 @@ if exists('s:current_syntax')
   let b:current_syntax=s:current_syntax
 endif
 
-" &entities; compare with dtd
-syn match   xmlEntity       contained "&[^; \t]*;" contains=xmlEntityPunct
-syn match   xmlEntityPunct  contained "[&.;]"
+syn match   cjsxEntity       contained "&[^; \t]*;" contains=cjsxEntityPunct
+syn match   cjsxEntityPunct  contained "[&.;]"
 
-syn region  xmlString contained start=/"/ end=/"/ contains=@Spell,coffeeInterp
-syn region  xmlString contained start=/'/ end=/'/ contains=@Spell
+syn region  cjsxEscapeBlock start=/{/ end=/}/ contained contains=@coffeeAll keepend
+syn region  cjsxEscapeBlockEscape start=/#{/ end=/}/ contained keepend
 
-" no highlighting for xmlEqual (xmlEqual has no highlighting group)
-syn match   xmlEqual /=/ contained display
+syn region  csjxAttributeString contained start=/"/ end=/"/ contains=@Spell,coffeeInterp
+syn region  csjxAttributeString contained start=/'/ end=/'/ contains=@Spell
 
-syn match   xmlAttribProperty /\s[A-Za-z_][A-Za-z0-9_-]*/ contained
-syn match   xmlAttrib /\s[A-Za-z_][A-Za-z0-9_-]*\s*=/ contained contains=xmlEqual,xmlAttribProperty
+syn match   cjsxAttribProperty /[A-Za-z_][A-Za-z0-9_-]*/ contained
+syn region  cjsxAttrib start=/\s[A-Za-z_][A-Za-z0-9_-]/hs=s+1 end=/=/ contained contains=cjsxAttribProperty
 
-syn region  cjsxEscapeBlock start=/[^#]{/ end=/}/ contained contains=@coffeeAll keepend
+syn region  cjsxOpenTag start=/<[A-Za-z_][A-Za-z0-9-_]*/ end=/>/ contains=coffeeNumber,coffeeFloat,csjxAttributeString,cjsxAttrib,cjsxEscapeBlock
 
-syn region  xmlOpenTag start=/<[A-Za-z_][A-Za-z0-9-_]*/ end=/>/ contains=cjsxEscapeBlock,coffeeNumber,coffeeFloat,xmlString,xmlAttrib
+syn match   cjsxEndTag /<\/[A-Za-z_][A-Za-z0-9-_]*>/ contained
 
-syn match   xmlEndTag /<\/[A-Za-z_][A-Za-z0-9-_]*>/ contained
+syn region  cjsxElement keepend start=/<[A-Za-z_][A-Za-z0-9-_]*/ end=/\/>\|<\/[A-Za-z_][A-Za-z0-9-_]*>/ contains=cjsxOpenTag,cjsxEndTag,cjsxEscapeBlockEscape,cjsxEscapeBlock,cjsxEntity
 
-syn region  xmlElement keepend start=/<[A-Za-z_][A-Za-z0-9-_]*/ end=/(\/>|<\/[A-Za-z_][A-Za-z0-9-_]*>)/ contains=xmlOpenTag,xmlEndTag,cjsxEscapeBlock,xmlEntity
-
-" The default highlighting.
-hi def link xmlOpenTag         Function
-hi def link xmlTagName         Function
-hi def link xmlEndTag          Function
-hi def link xmlEntityPunct     Type
-hi def link xmlEntity          Statement
-hi def link xmlAttribProperty  Type
+"" The default highlighting.
+hi def link csjxAttributeString String
+hi def link cjsxOpenTag         Function
+hi def link cjsxTagName         Function
+hi def link cjsxEndTag          Function
+hi def link cjsxEntityPunct     Type
+hi def link cjsxEntity          Statement
+hi def link cjsxAttribProperty  Type

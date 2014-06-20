@@ -14,7 +14,7 @@ React.createClass
     { hello.test['props'] }
   render: () ->
     # This should have xml like syntax highlighting
-    <div single-quote-attr='value' />
+    <div single-quote-attr='value' /> # Selection does not continue here
 
     <div double-quote-attr="value" />
 
@@ -41,8 +41,8 @@ React.createClass
          double-quote-attr="value"
          func-call={ this.props.func(arg1, arg2, () -> 1 + 1) }
          calculated-attr={ this.props['prop-name'] }
-         interpolated-attr= "CoffeeScript supports #{string.interpolation}"
-         invalid-interpolated-attr= 'CoffeeScript supports #{string.interpolation}'
+         interpolated-attr="CoffeeScript supports #{string.interpolation}"
+         invalid-interpolated-attr='CoffeeScript supports #{string.interpolation}'
          func-call={ this.props.func(arg1, arg2) }
          anon-func-call={ (() -> 3)() }
          integers=12345
