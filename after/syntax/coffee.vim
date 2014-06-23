@@ -2,255 +2,29 @@ if exists('b:current_syntax')
   let s:current_syntax=b:current_syntax
   unlet b:current_syntax
 endif
-"syn include @XMLSyntax syntax/xml.vim
+
 if exists('s:current_syntax')
   let b:current_syntax=s:current_syntax
 endif
 
-syn region cjsxRegion contains=xmlTag,cjsxRegion,coffeeCurlies,coffeeString
-  \ start=+<\z(a-zA-Z0-9:\-]\+\)+
-  \ skip=+<!--\_.\{-}-->+
-  \ end=+</\z1\_\s\{-}>+
-  \ end=+/>+
-  \ keepend
-  \ extend
+syn match   cjsxEntity       contained "&[^; \t]*;" contains=cjsxEntityPunct
+syn match   cjsxEntityPunct  contained "[&.;]"
 
-" mark illegal characters
-syn match xmlError "[<&]"
+syn region  cjsxEscapeBlock start=/[^#]\?{/ end=/}/ contained contains=@coffeeAll keepend
+syn region  cjsxEscapeBlockEscape start=/#{/ end=/}/ contained keepend
 
-" strings (inside tags) aka VALUES
-" EXAMPLE: <tag foo.attribute = "value">
-syn region  xmlString contained start=+"+ end=+"+ contains=xmlEntity,@Spell,coffeeInterp display
-syn region  xmlString contained start=+'+ end=+'+ contains=xmlEntity,@Spell display
-syn region  xmlString contained start=+{+ end=++ contains=coffeeCurlies
+syn match   cjsxAttribProperty /[A-Za-z_][A-Za-z0-9_-]*/ contained
+syn region  cjsxAttrib start=/\s[A-Za-z_][A-Za-z0-9_-]/hs=s+1 end=/=/ contained contains=cjsxAttribProperty
 
-" punctuation (within attributes)
-" EXAMPLE: <tag xml:foo.attribute ...>
-syn match   xmlAttribPunct +[:.]+ contained display
+syn region cjsxBody start=+[^/]>+ms=s+2 start=/>/ms=s+1 end=+<\/+me=e-2 contained contains=cjsxElement,cjsxEscapeBlockEscape,cjsxEscapeBlock,cjsxEntity
 
-" no highlighting for xmlEqual (xmlEqual has no highlighting group)
-syn match   xmlEqual +=+ display
+syn region cjsxOpenTag start=/<[A-Za-z_][A-Za-z0-9-_]*/ end=+/>+re=e-2,me=e-2 end=+[^/]\?>+re=e-2,me=e-2 contained contains=cjsxEscapeBlock,coffeeString,cjsxAttrib,coffeeNumber,coffeeFloat transparent
 
-" attribute, everything before the '='
-" PROVIDES: @xmlAttribHook
-" EXAMPLE:
-" <tag foo.attribute = "value">
-"      ^^^^^^^^^^^^^
-syn match   xmlAttrib
-  \ +[-'"<]\@1<!\<[a-zA-Z:_][-.0-9a-zA-Z:_]*\>\%(['">]\@!\|$\)+
-  \ contained
-  \ contains=xmlAttribPunct,@xmlAttribHook
-  \ display
-
-" namespace spec
-" PROVIDES: @xmlNamespaceHook
-" EXAMPLE:
-" <xsl:for-each select = "lola">
-"  ^^^
-if exists("g:xml_namespace_transparent")
-syn match   xmlNamespace
-  \ +\(<\|</\)\@2<=[^ /!?<>"':]\+[:]\@=+
-  \ contained
-  \ contains=@xmlNamespaceHook
-  \ transparent
-  \ display
-else
-syn match   xmlNamespace
-  \ +\(<\|</\)\@2<=[^ /!?<>"':]\+[:]\@=+
-  \ contained
-  \ contains=@xmlNamespaceHook
-  \ display
-endif
-
-" tag name
-" PROVIDES: @xmlTagHook
-" EXAMPLE:
-" <tag foo.attribute = "value">
-"  ^^^
-syn match   xmlTagName
-  \ +<\@1<=[^ /!?<>"']\++
-  \ contained
-  \ contains=xmlNamespace,xmlAttribPunct,@xmlTagHook
-  \ display
-
-if exists('g:xml_syntax_folding')
-  " start tag
-  " use matchgroup=xmlTag to skip over the leading '<'
-  " PROVIDES: @xmlStartTagHook
-  " EXAMPLE:
-  " <tag id="whoops">
-  " s^^^^^^^^^^^^^^^e
-  syn region   xmlTag
-    \ matchgroup=xmlTag start=+<[^ /!?<>"']\@=+
-    \ matchgroup=xmlTag end=+>+
-    \ contained
-    \ contains=xmlError,xmlTagName,xmlAttrib,xmlEqual,xmlString,@xmlStartTagHook,coffeeNumber,coffeeFloat
-
-
-  " highlight the end tag
-  " PROVIDES: @xmlTagHook (should we provide a separate @xmlEndTagHook ?)
-  " EXAMPLE:
-  " </tag>
-  " ^^^^^^
-  syn match   xmlEndTag
-    \ +</[^ /!?<>"']\+>+
-    \ contained
-    \ contains=xmlNamespace,xmlAttribPunct,@xmlTagHook
-
-
-  " tag elements with syntax-folding.
-  " NOTE: NO HIGHLIGHTING -- highlighting is done by contained elements
-  " PROVIDES: @xmlRegionHook
-  " EXAMPLE:
-  " <tag id="whoops">
-  "   <!-- comment -->
-  "   <another.tag></another.tag>
-  "   <empty.tag/>
-  "   some data
-  " </tag>
-  syn region   xmlRegion
-    \ start=+<\z([^ /!?<>"']\+\)+
-    \ skip=+<!--\_.\{-}-->+
-    \ end=+</\z1\_\s\{-}>+
-    \ matchgroup=xmlEndTag end=+/>+
-    \ fold
-    \ contains=xmlTag,xmlEndTag,xmlCdata,xmlRegion,xmlComment,xmlEntity,xmlProcessing,@xmlRegionHook,@Spell
-    \ keepend
-    \ extend
-else
-
-  " no syntax folding:
-  " - contained attribute removed
-  " - xmlRegion not defined
-  syn region   xmlTag
-    \ matchgroup=xmlTag start=+<[^ /!?<>"']\@=+
-    \ matchgroup=xmlTag end=+>+
-    \ contains=xmlError,xmlTagName,xmlAttrib,xmlEqual,xmlString,@xmlStartTagHook
-
-      syn match   xmlEndTag
-    \ +</[^ /!?<>"']\+>+
-    \ contains=xmlNamespace,xmlAttribPunct,@xmlTagHook
-
-endif
-
-
-" &entities; compare with dtd
-syn match   xmlEntity                 "&[^; \t]*;" contains=xmlEntityPunct
-syn match   xmlEntityPunct  contained "[&.;]"
-
-if exists('g:xml_syntax_folding')
-
-    " The real comments (this implements the comments as defined by xml,
-    " but not all xml pages actually conform to it. Errors are flagged.
-  syn region  xmlComment
-    \ start=+<!+
-    \ end=+>+
-    \ contains=xmlCommentStart,xmlCommentError
-    \ extend
-    \ fold
-
-else
-
-  " no syntax folding:
-  " - fold attribute removed
-  "
-  syn region  xmlComment
-    \ start=+<!+
-    \ end=+>+
-    \ contains=xmlCommentStart,xmlCommentError
-    \ extend
-
-endif
-
-syn match xmlCommentStart   contained "<!" nextgroup=xmlCommentPart
-syn keyword xmlTodo         contained TODO FIXME XXX
-syn match   xmlCommentError contained "[^><!]"
-syn region  xmlCommentPart
-  \ start=+--+
-  \ end=+--+
-  \ contained
-  \ contains=xmlTodo,@xmlCommentHook,@Spell
-
-
-" CData sections
-" PROVIDES: @xmlCdataHook
-syn region    xmlCdata
-  \ start=+<!\[CDATA\[+
-  \ end=+]]>+
-  \ contains=xmlCdataStart,xmlCdataEnd,@xmlCdataHook,@Spell
-  \ keepend
-  \ extend
-
-" using the following line instead leads to corrupt folding at CDATA regions
-" syn match    xmlCdata      +<!\[CDATA\[\_.\{-}]]>+  contains=xmlCdataStart,xmlCdataEnd,@xmlCdataHook
-syn match    xmlCdataStart +<!\[CDATA\[+  contained contains=xmlCdataCdata
-syn keyword  xmlCdataCdata CDATA          contained
-syn match    xmlCdataEnd   +]]>+          contained
-
-" Processing instructions
-" This allows "?>" inside strings -- good idea?
-syn region  xmlProcessing matchgroup=xmlProcessingDelim start="<?" end="?>" contains=xmlAttrib,xmlEqual,xmlString
-
-if exists('g:xml_syntax_folding')
-  " DTD -- we use dtd.vim here
-  syn region  xmlDocType matchgroup=xmlDocTypeDecl
-    \ start="<!DOCTYPE"he=s+2,rs=s+2 end=">"
-    \ fold
-    \ contains=xmlDocTypeKeyword,xmlInlineDTD,xmlString
-else
-  " no syntax folding:
-  " - fold attribute removed
-  syn region  xmlDocType matchgroup=xmlDocTypeDecl
-    \ start="<!DOCTYPE"he=s+2,rs=s+2 end=">"
-    \ contains=xmlDocTypeKeyword,xmlInlineDTD,xmlString
-endif
-
-syn keyword xmlDocTypeKeyword contained DOCTYPE PUBLIC SYSTEM
-syn region  xmlInlineDTD contained matchgroup=xmlDocTypeDecl start="\[" end="]" contains=@xmlDTD
-
-" synchronizing
-" TODO !!! to be improved !!!
-
-syn sync match xmlSyncDT grouphere  xmlDocType +\_.\(<!DOCTYPE\)\@=+
-" syn sync match xmlSyncDT groupthere  NONE       +]>+
-
-if exists('g:xml_syntax_folding')
-  syn sync match xmlSync grouphere   xmlRegion  +\_.\(<[^ /!?<>"']\+\)\@=+
-  " syn sync match xmlSync grouphere  xmlRegion "<[^ /!?<>"']*>"
-  syn sync match xmlSync groupthere  xmlRegion  +</[^ /!?<>"']\+>+
-endif
-
-syn sync minlines=100
+syn region  cjsxElement start=/<[A-Za-z_][A-Za-z0-9-_]*/ end=/\/>/ end=/<\/[A-Za-z_][A-Za-z0-9-_]*>/ contains=cjsxOpenTag,cjsxBody
 
 " The default highlighting.
-hi def link xmlTodo             Todo
-hi def link xmlTag              Function
-hi def link xmlTagName          Function
-hi def link xmlEndTag           Identifier
-if !exists("g:xml_namespace_transparent")
-  hi def link xmlNamespace      Tag
-endif
-hi def link xmlEntity           Statement
-hi def link xmlEntityPunct      Type
-
-hi def link xmlAttribPunct      Comment
-hi def link xmlAttrib           Type
-
-hi def link xmlString           String
-hi def link xmlComment          Comment
-hi def link xmlCommentStart     xmlComment
-hi def link xmlCommentPart      Comment
-hi def link xmlCommentError     Error
-hi def link xmlError            Error
-
-hi def link xmlProcessingDelim  Comment
-hi def link xmlProcessing       Type
-
-hi def link xmlCdata            String
-hi def link xmlCdataCdata       Statement
-hi def link xmlCdataStart       Type
-hi def link xmlCdataEnd         Type
-
-hi def link xmlDocTypeDecl      Function
-hi def link xmlDocTypeKeyword   Statement
-hi def link xmlInlineDTD        Function
+hi def link cjsxElement         Function
+hi def link cjsxTagName         Function
+hi def link cjsxEntity          Statement
+hi def link cjsxEntityPunct     Type
+hi def link cjsxAttribProperty  Type
