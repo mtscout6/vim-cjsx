@@ -22,6 +22,8 @@ syn region cjsxOpenTag start=/<[A-Za-z_][A-Za-z0-9-_]*/ end=+/>+re=e-2,me=e-2 en
 
 syn region  cjsxElement start=/<[A-Za-z_][A-Za-z0-9-_]*/ end=/\/>/ end=/<\/[A-Za-z_][A-Za-z0-9-_]*>/ contains=cjsxOpenTag,cjsxBody
 
+syn cluster coffeeAll add=cjsxElement
+
 " The default highlighting.
 hi def link cjsxElement         Function
 hi def link cjsxTagName         Function
