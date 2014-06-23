@@ -1,4 +1,4 @@
-# vim-cjsx (work in progress)
+# vim-cjsx
 
 Syntax highlighting and indenting for CJSX. CJSX is the [JSX](http://facebook.github.io/react/index.html) equivalent in CoffeeScript.
 
