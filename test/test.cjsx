@@ -200,4 +200,24 @@ React.createClass
     document.getElementById 'content'
   )
 
+  # Should not highlight as html entity
+  &nbsp;
+
+  # Should be exited jsx syntax
+  (() -> five = 3)()
+
+  <g class='bars'>
+    { _.map barTicks, (tick) ->
+      <g class='tick' transform="translate(0,#{props.y(tick)})">
+        <line x2="#{props.width}" y2="0" />
+      </g>
+    }
+  </g>
+
+  # Should not highlight as html entity
+  &nbsp;
+
+  # Should be exited jsx syntax
+  (() -> five = 3)()
+
   exports
