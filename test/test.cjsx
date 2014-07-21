@@ -206,6 +206,18 @@ React.createClass
   # Should be exited jsx syntax
   (() -> five = 3)()
 
+  <li><a href="\##{@props.component.id}">{@props.component.title}</a></li>
+
+  <li>
+    <a href="\##{@props.component.id}">{@props.component.title}</a>
+  </li>
+
+  <li>
+    <a href="\##{@props.component.id}">
+      {@props.component.title}
+    </a>
+  </li>
+
   <g class='bars'>
     { _.map barTicks, (tick) ->
       <g class='tick' transform="translate(0,#{props.y(tick)})">
