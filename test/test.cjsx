@@ -71,7 +71,10 @@ React.createClass
     <namespace.component test='blah' func={-> 1 + 1}>
     </namespace.component>
 
-    <@props.activeRouteHandler test='test' />
+    <@props.component test='test' />
+
+    <@props.component test='test'>
+    </@props.component>
 
 #   Should comment this out
 #   <div commented-out=true></div>
