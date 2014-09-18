@@ -82,6 +82,10 @@ React.createClass
       withFollowOnProp='test' />
     <Component flag />
 
+    <section>
+      <ul><li></li></ul>
+    </section>
+
 #   Should comment this out
 #   <div commented-out=true></div>
 
