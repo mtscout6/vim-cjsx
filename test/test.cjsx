@@ -68,6 +68,8 @@ React.createClass
       test
     </div>  #  test
 
+    <@props.activeRouteHandler test='test' />
+
 #   Should comment this out
 #   <div commented-out=true></div>
 
