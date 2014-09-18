@@ -18,9 +18,9 @@ syn region  cjsxAttrib start=/\s[A-Za-z_][A-Za-z0-9_-]/hs=s+1 end=/=/ contained 
 
 syn region  cjsxBody start=+[^/]>+ms=s+2 start=/>/ms=s+1 end=+<\/+me=e-2 contained contains=cjsxElement,cjsxEscapeBlockEscape,cjsxEscapeBlock,cjsxEntity
 
-syn region  cjsxOpenTag start=/<@\=[A-Za-z_][A-Za-z0-9-_]*/ end=+/>+re=e-2,me=e-2 end=+[^/]\?>+re=e-2,me=e-2 contained contains=cjsxEscapeBlock,coffeeString,cjsxAttrib,coffeeNumber,coffeeFloat transparent
+syn region  cjsxOpenTag start=/<@\=[A-Za-z_][A-Za-z0-9-_\.]*/ end=+/>+re=e-2,me=e-2 end=+[^/]\?>+re=e-2,me=e-2 contained contains=cjsxEscapeBlock,coffeeString,cjsxAttrib,coffeeNumber,coffeeFloat transparent
 
-syn region  cjsxElement start=/<@\=[A-Za-z_][A-Za-z0-9-_]*/ end=/\/>/ end=/<\/[A-Za-z_][A-Za-z0-9-_]*>/ contains=cjsxOpenTag,cjsxBody
+syn region  cjsxElement start=/<@\=[A-Za-z_][A-Za-z0-9-_\.]*/ end=/\/>/ end=/<\/[A-Za-z_][A-Za-z0-9-_\.]*>/ contains=cjsxOpenTag,cjsxBody
 
 syn cluster coffeeAll add=cjsxElement
 

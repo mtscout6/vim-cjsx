@@ -68,6 +68,9 @@ React.createClass
       test
     </div>  #  test
 
+    <namespace.component test='blah' func={-> 1 + 1}>
+    </namespace.component>
+
     <@props.activeRouteHandler test='test' />
 
 #   Should comment this out
