@@ -76,6 +76,12 @@ React.createClass
     <@props.component test='test'>
     </@props.component>
 
+    <Component flag withFollowOnProp='test' />
+    <Component
+      flag
+      withFollowOnProp='test' />
+    <Component flag />
+
 #   Should comment this out
 #   <div commented-out=true></div>
 

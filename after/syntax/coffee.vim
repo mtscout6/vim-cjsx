@@ -14,7 +14,7 @@ syn region  cjsxEscapeBlock start=/[^#]\?{/ end=/}/ contained contains=@coffeeAl
 syn region  cjsxEscapeBlockEscape start=/#{/ end=/}/ contained keepend
 
 syn match   cjsxAttribProperty /[A-Za-z_][A-Za-z0-9_-]*/ contained
-syn region  cjsxAttrib start=/\s[A-Za-z_][A-Za-z0-9_-]/hs=s+1 end=/=/ contained contains=cjsxAttribProperty
+syn region  cjsxAttrib start=/\s[A-Za-z_][A-Za-z0-9_-]/hs=s+1 end=/=/ end=/\s[A-Za-z_]/me=e-2 end=+[/>]+me=e-1 contained contains=cjsxAttribProperty
 
 syn region  cjsxBody start=+[^/]>+ms=s+2 start=/>/ms=s+1 end=+<\/+me=e-2 contained contains=cjsxElement,cjsxEscapeBlockEscape,cjsxEscapeBlock,cjsxEntity
 
