@@ -20,6 +20,7 @@ React.createClass
     binary=0B0101
     octal=0o01234567
     octal=0O01234567
+    multiInterpolate="#{@props.address.city} #{@props.address.state}, #{@props.address.zipCode}"
     { hello.test['props'] }
     (() -> five = 3)()
   render: () ->
@@ -86,6 +87,14 @@ React.createClass
       <ul><li></li></ul>
     </section>
 
+    <div>
+      #{1+1}
+    </div>
+
+    <div>
+      {"#{@props.address.city} #{@props.address.state}, #{@props.address.zipCode}"}
+    </div>
+
 #   Should comment this out
 #   <div commented-out=true></div>
 
@@ -103,8 +112,7 @@ React.createClass
          positive=+12345>
       test jsx text &nbsp; &gt;
       # test comment does not render
-      "test interpolation #{should not work}"
-      test interpolation #{should not work}
+      test interpolation #{ 1 + 1 }
       { this.props.func(arg1, arg2, () -> 1 + 1) }
       { this.props['prop-name'] }
       { (() -> five = 3)() }
@@ -155,7 +163,7 @@ React.createClass
              positive=+12345>
           test jsx text &nbsp; &gt;
           # test comment does not render
-          "test interpolation #{should not work}"
+          test interpolation #{ 1 + 1 }
           { this.props.func(arg1, arg2, () -> 1 + 1) }
           { this.props['prop-name'] }
           { (() -> five = 3)() }
@@ -165,7 +173,7 @@ React.createClass
       </div>
       test jsx text &nbsp; &gt;
       # test comment does not render
-      "test interpolation #{should not work}"
+      test interpolation #{ 1 + 1 }
       { this.props.func(arg1, arg2, () -> 1 + 1) }
       { this.props['prop-name'] }
       { (() -> five = 3)() }
@@ -175,7 +183,7 @@ React.createClass
     </div>
     test jsx text &nbsp; &gt;
     # test comment does not render
-    "test interpolation #{should not work}"
+    test interpolation #{ 1 + 1 }
     { this.props.func(arg1, arg2, () -> 1 + 1) }
     { this.props['prop-name'] }
     { (() -> five = 3)() }
@@ -206,8 +214,7 @@ React.createClass
          positive=+12345>
       test jsx text &nbsp; &gt;
       # test comment does not render
-      "test interpolation #{should not work}"
-      test interpolation #{should not work}
+      test interpolation #{ 1 + 1 }
       { this.props.func(arg1, arg2, () -> 1 + 1) }
       { this.props['prop-name'] }
       { (() -> five = 3)() }
