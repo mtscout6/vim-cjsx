@@ -95,6 +95,8 @@ React.createClass
       {"#{@props.address.city} #{@props.address.state}, #{@props.address.zipCode}"}
     </div>
 
+    <Route path="{id}/{action}" handler={Handler} />
+
 #   Should comment this out
 #   <div commented-out=true></div>
 
